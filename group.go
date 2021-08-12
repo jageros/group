@@ -89,19 +89,11 @@ func (g *Group) Cancel() {
 // ============ Global API ============
 
 func init() {
-	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	eg, ctx2 := errgroup.WithContext(ctx)
-	g_ = &Group{
-		eg:     eg,
-		ctx:    ctx2,
-		cancel: cancel,
-	}
+	g_ = Default()
 }
 
 func Go(f func(ctx context.Context) error) {
-	g_.eg.Go(func() error {
-		return f(g_.ctx)
-	})
+	g_.Go(f)
 }
 
 func Wait() error {
